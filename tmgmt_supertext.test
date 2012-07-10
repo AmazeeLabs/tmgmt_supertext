@@ -34,6 +34,7 @@ class TMGMTSupertextTestCase extends TMGMTBaseTestCase {
     // We are testing with UTC Timezone and not the one from the Server.
     variable_set('configurable_timezones', 0);
     variable_set('date_default_timezone', 'UTC');
+    date_default_timezone_set('UTC');
   }
 
   /**
