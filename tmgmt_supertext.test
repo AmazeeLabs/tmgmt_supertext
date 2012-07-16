@@ -26,7 +26,7 @@ class TMGMTSupertextTestCase extends TMGMTBaseTestCase {
    */
   function setUp() {
     parent::setUp(array('tmgmt_ui', 'tmgmt_supertext', 'tmgmt_supertext_test'));
-    $this->drupalLogin($this->admin_user);
+    $this->loginAsAdmin();
     $this->setEnvironment('de');
     $this->setEnvironment('es');
     $this->setEnvironment('it');
