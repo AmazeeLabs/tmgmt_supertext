@@ -46,9 +46,10 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
       $mapping = $plugin->getMappedLanguages($language, $translator);
       if ($mapping) {
         if (count($mapping) == 1) {
+          $mapping_keys = array_keys($mapping);
           $form['language_mapping_' . $language->language] = array(
             '#type' => 'value',
-            '#value' => array_shift(array_keys($mapping)),
+            '#value' => array_shift($mapping_keys),
           );
         }
         else {
