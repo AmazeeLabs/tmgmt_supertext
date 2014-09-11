@@ -194,7 +194,7 @@ function tmgmt_supertext_pluginsettingsform_validate_api_token($element, &$form_
   // supertextHttpRequest function just for this case.
   $translator->settings['api_username'] = $form_state['values']['settings']['api_username'];
   $translator->settings['api_token'] = $form_state['values']['settings']['api_token'];
-  $response = $plugin->supertextHttpRequest('translation/accountcheck', $translator, NULL, "GET");
+  $response = $plugin->supertextHttpRequest('accountcheck', $translator, NULL, "GET");
   if ($response->code == "200") {
     if ($response->data == 'false') {
       drupal_set_message(t('Your password or username is wrong.'), 'warning', FALSE);
