@@ -46,10 +46,9 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
       $mapping = $plugin->getMappedLanguages($language, $translator);
       if ($mapping) {
         if (count($mapping) == 1) {
-          $mapping_keys = array_keys($mapping);
           $form['language_mapping_' . $language->language] = array(
             '#type' => 'value',
-            '#value' => array_shift($mapping_keys),
+            '#value' => array_shift(array_keys($mapping)),
           );
         }
         else {
@@ -135,8 +134,26 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
       return $settings;
     }
     else {
-      drupal_set_message(t("Could not get quote from Supertext. Error: @error", array('@error' => $response->error)), 'error');
+      //If we run into an error with the API connection, we first try to see if we can get a connection to the supertext homepage
+      //This tells us if supertext is life or not
+      //If this does not work, we try google. We had a client that had the drupal website behind firewalls and therefore could not connect to the outside at all.
+      watchdog('tmgmt_supertext', 'Could NOT get a quote', $variables = NULL, $severity = WATCHDOG_NOTICE, $link = NULL);
+      drupal_set_message(t("Could NOT get quote from Supertext. Error: @error - Check the Watchdog logs for more information.", array('@error' => $response->error)), 'error');
+      
+      if($plugin->checkHttpRequest("https://www.supertext.ch"))      {
+        watchdog('tmgmt_supertext', 'Established a connection to https://www.supertext.ch', $variables = NULL, $severity = WATCHDOG_NOTICE, $link = NULL);
+      }
+      else {
+        watchdog('tmgmt_supertext', 'Could NOT establish a connection to https://www.supertext.ch', $variables = NULL, $severity = WATCHDOG_NOTICE, $link = NULL);
+
+        if($plugin->checkHttpRequest("https://www.google.com/"))        {
+          watchdog('tmgmt_supertext', 'Establish a connection to https://www.google.com', $variables = NULL, $severity = WATCHDOG_NOTICE, $link = NULL);
+        }
+        else {
+          watchdog('tmgmt_supertext', 'Could NOT establish a connection to https://www.google.com', $variables = NULL, $severity = WATCHDOG_NOTICE, $link = NULL);
+        }
+      }
       return array();
     }
-  }
+  }  
 }

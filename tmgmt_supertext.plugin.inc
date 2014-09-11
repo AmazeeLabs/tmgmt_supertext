@@ -150,6 +150,32 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
   }
 
   /**
+   * Function to test connections. Usefull to figure out if there is a problem with the API or with the general connection.
+   *
+   * @param string $url
+   *   The URL of the website you want to check. E.g. https://www.supertext.ch
+   *
+   * @return object
+   *   Returns true if the connection was succesfull, false otherwise.
+   */
+   public function checkHttpRequest($url) {
+    $options = array(
+      'method' => "GET",
+      'headers' => array(
+        'Accept' => 'text/html',
+        'User-Agent' => 'Drupal Supertext Translation Interface v0.1'),
+    );
+    
+    $response = drupal_http_request($url, $options);
+    if ($response->code == "200") { 
+        return TRUE;
+    } 
+    else {
+        return FALSE;
+    }    
+  }   
+  
+  /**
    *  Generates the Order Object needed by Supertext
    *
    *  @param TMGMTJob $job
