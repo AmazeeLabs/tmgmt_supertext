@@ -41,28 +41,28 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
     // Map drupal languages to languages that supertext can translate.
     // E.g. DE -> DE-CH
     // @TODO only make requests if nothing is set and add some caching.
-    $languages = language_list();
-    foreach ($languages as $language) {
-      $mapping = $plugin->getMappedLanguages($language, $translator);
+    foreach ($plugin->getRemoteLanguagesMappings($translator) as $local_language => $remote_language) {
+      $mapping = $plugin->getMappedLanguages($remote_language, $translator);
       if ($mapping) {
         if (count($mapping) == 1) {
-          $form['language_mapping_' . $language->language] = array(
+          $form['language_mapping_' . $remote_language] = array(
             '#type' => 'value',
             '#value' => array_shift(array_keys($mapping)),
           );
         }
         else {
-          $form['language_mapping_' . $language->language] = array(
+          $form['language_mapping_' . $remote_language] = array(
             '#type' => 'select',
-            '#title' => t('Select your mapping for @language_name,', array('@language_name' => $language->name)),
+            '#title' => t('Select your mapping for @language_name,', array('@language_name' => tmgmt_language_label($local_language) . ' (' . $local_language . ')')),
             '#options' => $mapping,
-            '#default_value' => $translator->getSetting('language_mapping_' . $language->language, ''),
-            '#description' => t('We need a more exact definition of @language_name, there are different versions of it.', array('@language_name' => $language->name)),
+            '#default_value' => $translator->getSetting('language_mapping_' . $remote_language, ''),
+            '#description' => t('We need a more exact definition of @language_name, there are different versions of it.', array('@language_name' => $remote_language)),
           );
         }
       }
 
     }
+dpm($plugin->getRemoteLanguagesMappings($translator), "getRemoteLanguagesMappings");
     $form['use_sandbox'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use Sandbox'),

@@ -36,12 +36,12 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
    * Implements TMGMTTranslatorPluginControllerInterface::canTranslate().
    */
   public function canTranslate(TMGMTTranslator $translator, TMGMTJob $job) {
+return TRUE;
     // Checking if there is a mapping saved.
     if (!$translator->getSetting('language_mapping_' . $job->target_language)) {
       // If no mapping saved, we check if the language is directly supported by
       // Supertext (only 1 mapping language).
-      $languages = language_list();
-      $possible_mapping_languages = $this->getMappedLanguages($languages[$job->target_language], $translator);
+      $possible_mapping_languages = $this->getMappedLanguages($job->target_language, $translator);
       if (count($possible_mapping_languages) == 1) {
         return TRUE;
       }
@@ -71,22 +71,25 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
    * mapping necessary
    */
   public function getMappedLanguages($language, TMGMTTranslator $translator) {
+dpm($language);
     $lastresponse = &drupal_static(__FUNCTION__);
     // If the last response was not 200, probably this one will also fail,
     // so we don't run it.
     /*if (isset($lastresponse->code) && $lastresponse->code != 200) {
       return FALSE;
     }*/
-    $service = 'translation/languagemapping/' . $language->language;
+    $service = 'translation/languagemapping/' . $language;
     $response = $this->supertextHttpRequest($service, $translator, NULL, "GET");
+dpm($response);
     $lastresponse = $response;
     if ($response->code == "200") {
       $responsedata = json_decode($response->data);
-      // If language is supported, we don't need a mapping.
+      dpm($responsedata);
+// If language is supported, we don't need a mapping.
       $lang_settings = array();
       if (isset($responsedata->Supported)) {
         if ($responsedata->Supported == TRUE) {
-          $lang_settings[$language->language] = $language->name;
+          $lang_settings[$language] = $language;
           return $lang_settings;
         }
         else {
@@ -100,7 +103,8 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
       }
     }
     else {
-      drupal_set_message(t("Could not get language mapping for @language_name from Supertext. Error: @error", array('@language_name' => $language->name, '@error' => $response->error)), 'error');
+dpm("here");
+      drupal_set_message(t("Could not get language mapping for @language_name from Supertext. Error: @error", array('@language_name' => $language, '@error' => $response->error)), 'error');
       return FALSE;
     }
   }
@@ -183,15 +187,18 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
    */
   public function generateSupertextOrderObject(TMGMTJob $job) {
     $translator = $job->getTranslator();
+    $controller = tmgmt_translator_plugin_controller($translator->plugin);
     // Check if there is mapping.
-    if ($language = $translator->getSetting('language_mapping_' . $job->source_language)) {
+    if ($language = $translator->getSetting('language_mapping_' . $controller->mapToRemoteLanguage($translator, $job->source_language))) {
       $sourcelanguage = $language;
+dpm($sourcelanguage, 'sourcelanguage');
     }
     else {
       $sourcelanguage = $job->source_language;
     }
-    if ($language = $translator->getSetting('language_mapping_' . $job->target_language)) {
+    if ($language = $translator->getSetting('language_mapping_' . $controller->mapToRemoteLanguage($translator, $job->target_language))) {
       $targetlanguage = $language;
+dpm($targetlanguage, 'targetlanguage');
     }
     else {
       $targetlanguage = $job->target_language;
