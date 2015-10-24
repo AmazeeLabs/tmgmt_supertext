@@ -146,7 +146,22 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
       $options['data'] = json_encode($dataobject);
     }
 
-    return drupal_http_request($url, $options);
+    $response = drupal_http_request($url, $options);
+    if ($response->code != '200' || $translator->getSetting('use_sandbox')) {
+      watchdog('tmgmt_supertext', 'Request to Supertext.
+<br />Response code: @response_code
+<br />Response data: @response_data
+<br />Request URL: @request_url
+<br />Request method: @request_method
+<br />Request data: <pre>@request_data</pre>', array(
+        '@response_code' =>$response->code,
+        '@response_data' =>$response->data,
+        '@request_url' => $url,
+        '@request_method' => $method,
+        '@request_data' => isset($dataobject) ? print_r($dataobject, TRUE) : '',
+      ), $response->code == '200' ? WATCHDOG_NOTICE : WATCHDOG_ERROR);
+    }
+    return $response;
   }
 
   /**

@@ -80,9 +80,10 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
   }
 
   /**
-   * Overrides TMGMTDefaultTranslatorUIController::checkoutSettingsForm().
+   * {@inheritdoc}
    */
   public function checkoutSettingsForm($form, &$form_state, TMGMTJob $job) {
+    /** @var TMGMTSupertextPluginController $plugin */
     $plugin = tmgmt_translator_plugin_controller($this->pluginType);
     $object = $plugin->generateSupertextOrderObject($job);
     $translator = $job->getTranslator();
@@ -135,7 +136,7 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
       return $settings;
     }
     else {
-      drupal_set_message(t("Could not get quote from Supertext. Error: @error", array('@error' => $response->error)), 'error');
+      drupal_set_message(t("Could not get quote from Supertext. Error: @error<br />Check the log for more details.", array('@error' => $response->error)), 'error');
       return array();
     }
   }
