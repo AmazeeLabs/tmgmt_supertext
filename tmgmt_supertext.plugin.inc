@@ -224,7 +224,13 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
     $order_settings = explode(":", $job->settings['supertext-job']);
     $object->OrderTypeId = $order_settings[0];
     $object->DeliveryId = $order_settings[1];
-    $object->OrderName = $job->label;
+    $object->OrderName = trim($job->label);
+    if ($object->OrderName === '') {
+      $object->OrderName = 'Job ' . $job->tjid;
+    }
+    elseif (strlen($object->OrderName) > 100) {
+      $object->OrderName = substr($object->OrderName, 0, 97) . '...';
+    }
 
     $response = $this->supertextHttpRequest('translation/order', $job->getTranslator(), $object);
     if ($response->code == "200") {
