@@ -148,12 +148,13 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
 
     $response = drupal_http_request($url, $options);
     if ($response->code != '200' || $translator->getSetting('use_sandbox')) {
-      watchdog('tmgmt_supertext', 'Request to Supertext.
+      watchdog('tmgmt_supertext', 'Request to Supertext @service.
 <br />Response code: @response_code
 <br />Response data: @response_data
 <br />Request URL: @request_url
 <br />Request method: @request_method
 <br />Request data: <pre>@request_data</pre>', array(
+        '@service' => $service,
         '@response_code' =>$response->code,
         '@response_data' =>$response->data,
         '@request_url' => $url,
