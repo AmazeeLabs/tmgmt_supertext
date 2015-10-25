@@ -235,6 +235,6 @@ function tmgmt_supertext_pluginsettingsform_validate_api_token($element, &$form_
     }
   }
   else {
-    drupal_set_message(t("Couldn't check account data with Supertext. Response: @response", array('@response' => $response->data)), 'warning', FALSE);
+    drupal_set_message(t("Couldn't check account data with Supertext. Response: @response<br />Check the log for more details.", array('@response' => $response->data)), 'warning', FALSE);
   }
 }

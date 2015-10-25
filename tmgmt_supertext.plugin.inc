@@ -100,7 +100,7 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
       }
     }
     else {
-      drupal_set_message(t("Could not get language mapping for @language_name from Supertext. Error: @error", array('@language_name' => $language->name, '@error' => $response->error)), 'error');
+      drupal_set_message(t("Could not get language mapping for @language_name from Supertext. Error: @error<br />Check the log for more details.", array('@language_name' => $language->name, '@error' => $response->error)), 'error');
       return FALSE;
     }
   }
@@ -246,11 +246,11 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
     }
     elseif ($response->code == "401") {
       // Wrong or missing authentication.
-      $job->rejected('Rejected by Supertext Translator: Wrong or missing authentication. Please check your Supertext Translator Settings.', array(), 'error');
+      $job->rejected('Rejected by Supertext Translator: Wrong or missing authentication. Please check your Supertext Translator Settings. Check the log for more details.', array(), 'error');
       return;
     }
     else {
-      $job->rejected('Unknown error from Supertext Translator: !error', array('!error' => $response->data), 'error');
+      $job->rejected('Unknown error from Supertext Translator: !error<br />Check the log for more details.', array('!error' => $response->data), 'error');
       return;
     }
   }
