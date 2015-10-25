@@ -221,9 +221,10 @@ class TMGMTSupertextPluginController extends TMGMTDefaultTranslatorPluginControl
    * Here we will acutally query source and get translations.
    */
   public function requestTranslation(TMGMTJob $job) {
+    $predefined_order_type_id = (string) $job->getTranslator()->getSetting('order_type_id');
     $object = $this->generateSupertextOrderObject($job);
     $order_settings = explode(":", $job->settings['supertext-job']);
-    $object->OrderTypeId = $order_settings[0];
+    $object->OrderTypeId = ctype_digit($predefined_order_type_id) ? $predefined_order_type_id : $order_settings[0];
     $object->DeliveryId = $order_settings[1];
     $object->OrderName = trim($job->label);
     if ($object->OrderName === '') {

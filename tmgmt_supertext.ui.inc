@@ -69,6 +69,12 @@ class TMGMTSupertextTranslatorUIController extends TMGMTDefaultTranslatorUIContr
       '#title' => t('Use Sandbox'),
       '#default_value' => $translator->getSetting('use_sandbox', TRUE),
     );
+    $form['order_type_id'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Order Type ID'),
+      '#default_value' => $translator->getSetting('order_type_id'),
+    );
+
     // No true validation, we just display a warning.
     //
     // @todo Implement the pluginSettingsFormValidate() function when
