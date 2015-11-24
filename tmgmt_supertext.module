@@ -162,6 +162,11 @@ function tmgmt_supertext_callback() {
     print format_string('Job @job_id is not found', array('@job_id' => $job_id));
     return;
   }
+  if ($job->isAborted()) {
+    drupal_add_http_header('Status', '423 Locked');
+    print format_string('Job @job_id is aborted', array('@job_id' => $job_id));
+    return;
+  }
 
   // Add translated data.
   $translation = array();
